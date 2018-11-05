@@ -25,9 +25,6 @@ class MyApp extends StatelessWidget {
 class LoginPageState extends State<LoginPage> {
 
   final GlobalKey<FormState> _formState = new GlobalKey<FormState>();
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseUser _user;
 
   String _email;
   String _password;
@@ -36,15 +33,16 @@ class LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Login Page'),
+        title: new Text('Demo Taller'),
       ),
       body: _createBody(),
+      backgroundColor: Colors.white,
     );
   }
 
   Widget _createBody() {
     return new Container(
-      padding: new EdgeInsets.only(top: 200.0),
+      padding: new EdgeInsets.only(top: 10.0),
       child: _createLoginView(),
     );
   }
@@ -57,11 +55,13 @@ class LoginPageState extends State<LoginPage> {
           new Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
+              Image.asset('images/flutter.png'),
               new TextFormField(
                 keyboardType: TextInputType.emailAddress,
                 decoration: new InputDecoration(
                     hintText: 'Ingrese su usuario',
-                    labelText: 'Direccion E-mail'
+                    labelText: 'Direccion E-mail',
+                    icon: new IconButton(icon: const Icon(Icons.mail))
                 ),
                 validator: (value) {
                   if (value.isEmpty) {
@@ -73,7 +73,8 @@ class LoginPageState extends State<LoginPage> {
               new TextFormField(
                 decoration: new InputDecoration(
                     hintText: 'Contraseña',
-                    labelText: 'Ingrese su contraseña'
+                    labelText: 'Ingrese su contraseña',
+                    icon: new IconButton(icon: const Icon(Icons.lock))
                 ),
                 obscureText: true,
                 validator: (value) {
@@ -170,10 +171,22 @@ class HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("Taller Countries"),
         actions: <Widget>[
-          new IconButton(icon: const Icon(Icons.list), onPressed: null)
+          new IconButton(icon: const Icon(Icons.highlight_off), onPressed: _onLogout),
         ],
       ),
       body: _buildCountries(),
+    );
+  }
+
+  Future<Widget> _onLogout() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushAndRemoveUntil(
+        new MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return new LoginPage();
+            }
+        ),
+            (Route<dynamic> route) => false
     );
   }
 
